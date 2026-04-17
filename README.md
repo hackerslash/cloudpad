@@ -6,7 +6,7 @@ Offline-first markdown notepad.
 
 - Stores notes locally in IndexedDB
 - Supports multiple tabs and pinned notes
-- Includes search, markdown preview, export, and keyboard shortcuts
+- Includes search, markdown preview, Markdown PDF export, and keyboard shortcuts
 - Lets you tweak theme, typography, sidebar position, density, tab style, width, and accent
 
 ## Run

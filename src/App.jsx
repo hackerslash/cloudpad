@@ -102,6 +102,7 @@ export default function App() {
   const [isDragging, setIsDragging] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(() => window.innerWidth > MOBILE_BREAKPOINT);
   const [tourOpen, setTourOpen] = useState(false);
@@ -355,6 +356,31 @@ export default function App() {
     URL.revokeObjectURL(url);
   }, [files]);
 
+  const exportRenderedPdf = useCallback(async () => {
+    if (!activeFile || isExportingPdf) return;
+
+    setIsExportingPdf(true);
+
+    try {
+      const { exportMarkdownPdf, getPdfFileName } = await import('./exportPdf.jsx');
+      const blob = await exportMarkdownPdf(activeFile, {
+        font: settings.font,
+        accent: settings.accent,
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = getPdfFileName(activeFile.name);
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      await showAlert('Failed to export rendered Markdown PDF.');
+    } finally {
+      setIsExportingPdf(false);
+    }
+  }, [activeFile, isExportingPdf, settings.accent, settings.font, showAlert]);
+
   const deleteWorkspace = useCallback(async () => {
     await NotepadDB.replaceAll([]);
     setOpenIds([]);
@@ -556,6 +582,16 @@ export default function App() {
                   disabled={!activeFile}
                 >
                   current file
+                </button>
+                <button
+                  className="export-menu-item"
+                  onClick={async () => {
+                    await exportRenderedPdf();
+                    setExportMenuOpen(false);
+                  }}
+                  disabled={!activeFile || isExportingPdf}
+                >
+                  {isExportingPdf ? 'rendering PDF...' : 'markdown PDF'}
                 </button>
                 <button
                   className="export-menu-item"
