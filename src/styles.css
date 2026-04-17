@@ -774,6 +774,25 @@ button { cursor: pointer; }
 }
 .shortcut-row:last-child { border-bottom: none; }
 
+.shortcut-actions {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.shortcut-action-btn {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.shortcut-action-btn:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 .delete-zone {
   margin-top: 20px;
   padding-top: 16px;
@@ -833,6 +852,90 @@ kbd {
   font-size: 11px;
   color: var(--fg);
   letter-spacing: 0.08em;
+}
+
+/* ---------------- GUIDED TOUR ---------------- */
+.tour-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  animation: fade 140ms ease;
+}
+.tour-backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+}
+.tour-spotlight {
+  position: fixed;
+  border-radius: 14px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  box-shadow: 0 0 0 9999px oklch(0.1 0 0 / 0.44);
+  pointer-events: none;
+  transition: top 160ms ease, left 160ms ease, width 160ms ease, height 160ms ease;
+}
+.tour-card {
+  position: fixed;
+  width: min(320px, calc(100vw - 32px));
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  padding: 22px 22px 18px;
+  z-index: 1;
+}
+.tour-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.tour-kicker,
+.tour-progress {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tour-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--fg);
+}
+.tour-body {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.tour-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+.tour-btn {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+.tour-btn:hover {
+  color: var(--fg);
+  border-color: var(--line-strong);
+}
+.tour-btn-primary {
+  color: var(--fg);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.tour-btn-primary:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 /* ---------------- TWEAKS PANEL ---------------- */

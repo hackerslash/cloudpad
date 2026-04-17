@@ -1,6 +1,6 @@
 export default function TabBar({ tabs, activeId, onSelect, onClose, onNew, style, onMenuToggle }) {
   return (
-    <div className={`tabbar tabstyle-${style}`}>
+    <div className={`tabbar tabstyle-${style}`} data-tour="tabbar">
       <button className="menu-toggle" onClick={onMenuToggle} title="Files" aria-label="Toggle file list">≡</button>
       <div className="tabs">
         {tabs.map((t) => {

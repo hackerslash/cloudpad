@@ -38,7 +38,7 @@ export default function Editor({
 
   return (
     <div className={`editor width-${width}`}>
-      <div className="editor-titlebar">
+      <div className="editor-titlebar" data-tour="editor-header">
         <input
           className="title-input"
           value={titleVal}
@@ -61,13 +61,14 @@ export default function Editor({
             className={`tool-btn ${showPreview ? 'on' : ''}`}
             onClick={onTogglePreview}
             title="Markdown preview (⌘P)"
+            data-tour="preview-toggle"
           >
             md
           </button>
         </div>
       </div>
 
-      <div className="editor-body">
+      <div className="editor-body" data-tour="editor-body">
         {showPreview ? (
           <div
             className="preview"

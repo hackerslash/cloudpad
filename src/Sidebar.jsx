@@ -126,7 +126,7 @@ export default function Sidebar({
 
   return (
     <aside className={`sidebar side-${side} density-${density}${mobileOpen ? ' mobile-open' : ''}`}>
-      <div className="sidebar-head">
+      <div className="sidebar-head" data-tour="sidebar-new">
         <div className="brand">
           <span className="brand-dot" />
           <span className="brand-name">cloudpad</span>
@@ -136,7 +136,7 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className="search-wrap">
+      <div className="search-wrap" data-tour="sidebar-search">
         <input
           className="search"
           placeholder="search…"

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-export function ShortcutsPanel({ open, onClose, onDeleteWorkspace }) {
+export function ShortcutsPanel({ open, onClose, onDeleteWorkspace, onReplayTour }) {
   const [deleteMode, setDeleteMode] = useState(false);
   const [deleteInput, setDeleteInput] = useState('');
   const inputRef = useRef(null);
@@ -46,6 +46,18 @@ export function ShortcutsPanel({ open, onClose, onDeleteWorkspace }) {
               <span>{label}</span>
             </div>
           ))}
+        </div>
+
+        <div className="shortcut-actions">
+          <button
+            className="shortcut-action-btn"
+            onClick={() => {
+              onReplayTour();
+              onClose();
+            }}
+          >
+            replay tour
+          </button>
         </div>
 
         <div className="delete-zone">
