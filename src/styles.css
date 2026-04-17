@@ -682,6 +682,42 @@ button { cursor: pointer; }
   max-width: 90vw;
   padding: 32px;
 }
+
+/* Dialog variant */
+.dialog-card { width: 340px; }
+.dialog-message {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg);
+  margin: 0 0 24px;
+  white-space: pre-line;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.dialog-btn {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 6px 16px;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  transition: all 120ms ease;
+}
+.dialog-btn:hover { color: var(--fg); border-color: var(--line-strong); }
+.dialog-btn-ok {
+  color: var(--fg);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.dialog-btn-ok:hover { background: var(--accent-soft); border-color: var(--accent); }
+.dialog-btn-ok.danger {
+  color: oklch(0.52 0.12 25);
+  border-color: oklch(0.52 0.12 25 / 0.45);
+  background: oklch(0.52 0.12 25 / 0.07);
+}
+.dialog-btn-ok.danger:hover { border-color: oklch(0.52 0.12 25); }
 .overlay-head {
   display: flex;
   justify-content: space-between;

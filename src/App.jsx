@@ -3,7 +3,7 @@ import NotepadDB from './db.js';
 import Sidebar from './Sidebar.jsx';
 import TabBar from './TabBar.jsx';
 import Editor from './Editor.jsx';
-import { ShortcutsPanel, TweaksPanel } from './Panels.jsx';
+import { ShortcutsPanel, TweaksPanel, Dialog } from './Panels.jsx';
 
 const TWEAK_DEFAULTS = {
   theme: 'light',
@@ -28,6 +28,24 @@ export default function App() {
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const dragCounter = useRef(0);
   const exportMenuRef = useRef(null);
+  const dialogResolveRef = useRef(null);
+  const [dialog, setDialog] = useState({ open: false, type: 'alert', message: '', danger: false });
+
+  const showAlert = useCallback((message) => new Promise((resolve) => {
+    dialogResolveRef.current = resolve;
+    setDialog({ open: true, type: 'alert', message, danger: false });
+  }), []);
+
+  const showConfirm = useCallback((message, { danger = false } = {}) => new Promise((resolve) => {
+    dialogResolveRef.current = resolve;
+    setDialog({ open: true, type: 'confirm', message, danger });
+  }), []);
+
+  const closeDialog = useCallback((result) => {
+    dialogResolveRef.current?.(result);
+    dialogResolveRef.current = null;
+    setDialog((d) => ({ ...d, open: false }));
+  }, []);
 
   useEffect(() => {
     if (!exportMenuOpen) return;
@@ -193,16 +211,19 @@ export default function App() {
 
   const restoreWorkspace = useCallback(async (data) => {
     if (!data?.cloudpad_backup || !Array.isArray(data.files)) {
-      alert('Not a valid Cloudpad workspace backup.');
+      await showAlert('Not a valid Cloudpad workspace backup.');
       return;
     }
     const count = data.files.length;
-    if (!confirm(`Restore ${count} file${count === 1 ? '' : 's'} from backup?\nThis will replace your current workspace.`)) return;
+    const ok = await showConfirm(
+      `Restore ${count} file${count === 1 ? '' : 's'} from backup?\nThis will replace your current workspace.`
+    );
+    if (!ok) return;
     await NotepadDB.replaceAll(data.files);
     setOpenIds([]);
     setActiveId(null);
     await refresh();
-  }, []);
+  }, [showAlert, showConfirm]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -249,7 +270,7 @@ export default function App() {
         const data = JSON.parse(await jsonFile.text());
         await restoreWorkspace(data);
       } catch {
-        alert('Failed to parse workspace backup.');
+        await showAlert('Failed to parse workspace backup.');
       }
       return;
     }
@@ -299,6 +320,7 @@ export default function App() {
         onPin={pinFile}
         onRename={renameFile}
         onDelete={deleteFile}
+        onConfirm={showConfirm}
         side={settings.side}
         density={settings.density}
         mobileOpen={mobileSidebarOpen}
@@ -397,6 +419,7 @@ export default function App() {
       </main>
 
       <ShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} onDeleteWorkspace={deleteWorkspace} />
+      <Dialog dialog={dialog} onClose={closeDialog} />
       <TweaksPanel open={tweaksOpen} settings={settings} setSettings={setSettings} onClose={() => setTweaksOpen(false)} />
     </div>
   );

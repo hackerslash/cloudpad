@@ -158,3 +158,45 @@ export function TweaksPanel({ open, settings, setSettings, onClose }) {
     </div>
   );
 }
+
+export function Dialog({ dialog, onClose }) {
+  const okRef = useRef(null);
+
+  useEffect(() => {
+    if (dialog.open) okRef.current?.focus();
+  }, [dialog.open]);
+
+  useEffect(() => {
+    if (!dialog.open) return;
+    const handler = (e) => {
+      if (e.key === 'Escape') onClose(false);
+      if (e.key === 'Enter') onClose(true);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [dialog.open, onClose]);
+
+  if (!dialog.open) return null;
+
+  return (
+    <div className="overlay" onClick={() => onClose(dialog.type === 'alert')}>
+      <div className="overlay-card dialog-card" onClick={(e) => e.stopPropagation()}>
+        <p className="dialog-message">{dialog.message}</p>
+        <div className="dialog-actions">
+          {dialog.type === 'confirm' && (
+            <button className="dialog-btn dialog-btn-cancel" onClick={() => onClose(false)}>
+              cancel
+            </button>
+          )}
+          <button
+            ref={okRef}
+            className={`dialog-btn dialog-btn-ok${dialog.danger ? ' danger' : ''}`}
+            onClick={() => onClose(true)}
+          >
+            {dialog.type === 'confirm' ? 'confirm' : 'ok'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

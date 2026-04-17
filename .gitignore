@@ -1,2 +1,22 @@
-/node_modules
-/.claude
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# local env
+.env
+.env.local
+.env.*.local
+
+# vite
+vite.config.js.timestamp-*
+
+# editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# claude code
+.claude/

@@ -24,6 +24,7 @@ export default function Sidebar({
   onPin,
   onRename,
   onDelete,
+  onConfirm,
   side,
   density,
   mobileOpen,
@@ -110,9 +111,10 @@ export default function Sidebar({
         </div>
         <button
           className="row-del"
-          onClick={(e) => {
+          onClick={async (e) => {
             e.stopPropagation();
-            if (confirm(`Delete "${f.name}"?`)) onDelete(f.id);
+            const ok = await onConfirm(`Delete "${f.name}"?`, { danger: true });
+            if (ok) onDelete(f.id);
           }}
           title="Delete"
         >
