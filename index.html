@@ -3,7 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cloudpad</title>
+
+    <!-- Primary -->
+    <title>Cloudpad — Minimal Offline Markdown Notepad</title>
+    <meta name="description" content="Free minimal markdown notepad that runs entirely in your browser. No account, no cloud — notes are stored locally and work offline. Open-source PWA." />
+    <meta name="keywords" content="markdown notepad, offline notes, markdown editor, browser notepad, local notes app, pwa notepad, free notepad, open source notes" />
+    <meta name="author" content="hackerslash" />
+    <link rel="canonical" href="https://cloudpad.hackerslash.dev/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cloudpad.hackerslash.dev/" />
+    <meta property="og:title" content="Cloudpad — Minimal Offline Markdown Notepad" />
+    <meta property="og:description" content="Free minimal markdown notepad that runs entirely in your browser. No account, no cloud — notes are stored locally and work offline." />
+    <meta property="og:image" content="https://cloudpad.hackerslash.dev/icon.svg" />
+    <meta property="og:site_name" content="Cloudpad" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://cloudpad.hackerslash.dev/" />
+    <meta name="twitter:title" content="Cloudpad — Minimal Offline Markdown Notepad" />
+    <meta name="twitter:description" content="Free minimal markdown notepad that runs entirely in your browser. No account, no cloud — notes are stored locally and work offline." />
+    <meta name="twitter:image" content="https://cloudpad.hackerslash.dev/icon.svg" />
 
     <!-- PWA -->
     <meta name="theme-color" content="#f9f8f5" media="(prefers-color-scheme: light)" />
@@ -13,6 +36,42 @@
     <meta name="apple-mobile-web-app-title" content="Cloudpad" />
     <link rel="apple-touch-icon" href="/icon.svg" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Cloudpad",
+      "url": "https://cloudpad.hackerslash.dev/",
+      "description": "Free minimal markdown notepad that runs entirely in your browser. No account, no cloud — notes are stored locally and work offline.",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires a modern browser with JavaScript enabled",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "license": "https://github.com/hackerslash/cloudpad/blob/main/LICENSE",
+      "author": {
+        "@type": "Person",
+        "name": "hackerslash",
+        "url": "https://github.com/hackerslash"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Offline-first with IndexedDB storage",
+        "Markdown preview",
+        "Multi-tab editing",
+        "Drag and drop file import",
+        "Workspace backup and restore",
+        "Dark, light, and sepia themes",
+        "Installable as PWA"
+      ]
+    }
+    </script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
