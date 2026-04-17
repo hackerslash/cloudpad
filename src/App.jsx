@@ -23,6 +23,8 @@ export default function App() {
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [tweaksOpen, setTweaksOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
 
   const [settings, setSettings] = useState(() => {
     try {
@@ -162,7 +164,8 @@ export default function App() {
   useEffect(() => {
     const onKey = (e) => {
       const mod = e.metaKey || e.ctrlKey;
-      if (mod && e.key.toLowerCase() === 'n') { e.preventDefault(); newFile(); }
+      if (mod && e.key.toLowerCase() === 'o') { e.preventDefault(); openFilePicker(); }
+      else if (mod && e.key.toLowerCase() === 'n') { e.preventDefault(); newFile(); }
       else if (mod && e.key.toLowerCase() === 'w') { e.preventDefault(); if (activeId) closeTab(activeId); }
       else if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); document.querySelector('.search')?.focus(); }
       else if (mod && e.key.toLowerCase() === 'p') { e.preventDefault(); setShowPreview((p) => !p); }
@@ -175,6 +178,53 @@ export default function App() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [activeId, exportActive]);
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    dragCounter.current++;
+    if ([...e.dataTransfer.items].some((item) => item.kind === 'file')) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setIsDragging(false);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const importFiles = async (fileList) => {
+    const valid = [...fileList].filter((f) => /\.(md|txt)$/i.test(f.name));
+    if (!valid.length) return;
+    let lastId = null;
+    for (const file of valid) {
+      const body = await file.text();
+      const name = file.name.replace(/\.(md|txt)$/i, '');
+      const created = await NotepadDB.create({ name, body });
+      lastId = created.id;
+      setOpenIds((prev) => [...prev, created.id]);
+    }
+    await refresh();
+    if (lastId) setActiveId(lastId);
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    await importFiles(e.dataTransfer.files);
+  };
+
+  const fileInputRef = useRef(null);
+  const openFilePicker = () => fileInputRef.current?.click();
+  const handleFileInput = (e) => {
+    importFiles(e.target.files);
+    e.target.value = '';
+  };
 
   const openTabs = openIds
     .map((id) => files.find((f) => f.id === id))
@@ -195,7 +245,21 @@ export default function App() {
         density={settings.density}
       />
 
-      <main className="main">
+      <main
+        className="main"
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        {isDragging && (
+          <div className="drop-overlay">
+            <div className="drop-overlay-inner">
+              <span className="drop-overlay-icon">↓</span>
+              <span>Drop .md or .txt files</span>
+            </div>
+          </div>
+        )}
         <TabBar
           tabs={openTabs}
           activeId={activeId}
@@ -217,8 +281,17 @@ export default function App() {
           />
         </div>
 
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".md,.txt"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileInput}
+        />
         <div className="bottom-chrome">
           <button className="chrome-btn" onClick={() => setShowShortcuts(true)} title="Shortcuts (⌘/)">⌘/</button>
+          <button className="chrome-btn" onClick={openFilePicker} title="Open file (⌘O)">open</button>
           <button className="chrome-btn" onClick={exportActive} title="Export (⌘E)" disabled={!activeFile}>export</button>
           <button
             className="chrome-btn"

@@ -757,3 +757,31 @@ kbd {
   width: 10px; height: 10px; border-radius: 50%;
   border: 1px solid var(--line-strong);
 }
+
+/* Drag and drop overlay */
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  opacity: 0.92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.drop-overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 48px;
+  border: 2px dashed var(--accent);
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.drop-overlay-icon {
+  font-size: 28px;
+  line-height: 1;
+}

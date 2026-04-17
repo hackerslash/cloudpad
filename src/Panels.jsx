@@ -2,6 +2,7 @@ export function ShortcutsPanel({ open, onClose }) {
   if (!open) return null;
   const rows = [
     ['⌘ N', 'new file'],
+    ['⌘ O', 'open file'],
     ['⌘ W', 'close tab'],
     ['⌘ S', 'save (auto)'],
     ['⌘ K', 'focus search'],
