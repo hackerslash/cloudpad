@@ -633,6 +633,34 @@ button { cursor: pointer; }
   text-decoration: none;
 }
 
+.export-wrap {
+  position: relative;
+}
+.export-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  min-width: 120px;
+  z-index: 20;
+  animation: fade 100ms ease;
+}
+.export-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 9px 14px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  transition: color 100ms ease, background 100ms ease;
+}
+.export-menu-item:last-child { border-bottom: none; }
+.export-menu-item:hover:not(:disabled) { color: var(--fg); background: var(--accent-soft); }
+.export-menu-item:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* ---------------- OVERLAYS ---------------- */
 .overlay {
   position: fixed;
@@ -690,6 +718,61 @@ button { cursor: pointer; }
   color: var(--muted);
 }
 .shortcut-row:last-child { border-bottom: none; }
+
+.delete-zone {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.delete-workspace-btn {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: oklch(0.55 0.1 25);
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 120ms ease;
+}
+.delete-workspace-btn:hover { opacity: 1; }
+
+.delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.delete-confirm-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: oklch(0.55 0.1 25);
+}
+.delete-confirm-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.delete-confirm-input {
+  flex: 1;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  border-bottom: 1px solid oklch(0.55 0.1 25 / 0.4);
+  padding-bottom: 3px;
+  color: var(--fg);
+  letter-spacing: 0.08em;
+}
+.delete-confirm-input::placeholder { color: var(--faint); }
+.delete-confirm-input:focus { border-bottom-color: oklch(0.55 0.1 25); outline: none; }
+.delete-confirm-btn {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border: 1px solid oklch(0.55 0.1 25 / 0.4);
+  color: oklch(0.55 0.1 25);
+  transition: all 120ms ease;
+}
+.delete-confirm-btn:not(:disabled):hover {
+  background: oklch(0.55 0.1 25 / 0.08);
+  border-color: oklch(0.55 0.1 25);
+}
+.delete-confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 kbd {
   font-family: var(--font-mono);
   font-size: 11px;

@@ -25,7 +25,18 @@ export default function App() {
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const dragCounter = useRef(0);
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!exportMenuOpen) return;
+    const handler = (e) => {
+      if (!exportMenuRef.current?.contains(e.target)) setExportMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [exportMenuOpen]);
 
   const [settings, setSettings] = useState(() => {
     try {
@@ -162,6 +173,37 @@ export default function App() {
     URL.revokeObjectURL(url);
   }, [activeFile]);
 
+  const exportWorkspace = useCallback(() => {
+    const backup = { cloudpad_backup: true, version: 1, exportedAt: Date.now(), files };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cloudpad-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [files]);
+
+  const deleteWorkspace = useCallback(async () => {
+    await NotepadDB.replaceAll([]);
+    setOpenIds([]);
+    setActiveId(null);
+    await refresh();
+  }, []);
+
+  const restoreWorkspace = useCallback(async (data) => {
+    if (!data?.cloudpad_backup || !Array.isArray(data.files)) {
+      alert('Not a valid Cloudpad workspace backup.');
+      return;
+    }
+    const count = data.files.length;
+    if (!confirm(`Restore ${count} file${count === 1 ? '' : 's'} from backup?\nThis will replace your current workspace.`)) return;
+    await NotepadDB.replaceAll(data.files);
+    setOpenIds([]);
+    setActiveId(null);
+    await refresh();
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e) => {
@@ -172,10 +214,10 @@ export default function App() {
       else if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); document.querySelector('.search')?.focus(); }
       else if (mod && e.key.toLowerCase() === 'p') { e.preventDefault(); setShowPreview((p) => !p); }
       else if (mod && e.key === '/') { e.preventDefault(); setShowShortcuts((s) => !s); }
-      else if (mod && e.key.toLowerCase() === 'e') { e.preventDefault(); exportActive(); }
+      else if (mod && e.key.toLowerCase() === 'e') { e.preventDefault(); setExportMenuOpen((o) => !o); }
       else if (mod && e.key.toLowerCase() === 'd') { e.preventDefault(); setSettings((s) => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' })); }
       else if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); } // auto-saving
-      else if (e.key === 'Escape') { setShowShortcuts(false); setTweaksOpen(false); }
+      else if (e.key === 'Escape') { setShowShortcuts(false); setTweaksOpen(false); setExportMenuOpen(false); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -200,7 +242,18 @@ export default function App() {
   };
 
   const importFiles = async (fileList) => {
-    const valid = [...fileList].filter((f) => /\.(md|txt)$/i.test(f.name));
+    const all = [...fileList];
+    const jsonFile = all.find((f) => /\.json$/i.test(f.name));
+    if (jsonFile) {
+      try {
+        const data = JSON.parse(await jsonFile.text());
+        await restoreWorkspace(data);
+      } catch {
+        alert('Failed to parse workspace backup.');
+      }
+      return;
+    }
+    const valid = all.filter((f) => /\.(md|txt)$/i.test(f.name));
     if (!valid.length) return;
     let lastId = null;
     for (const file of valid) {
@@ -262,7 +315,7 @@ export default function App() {
           <div className="drop-overlay">
             <div className="drop-overlay-inner">
               <span className="drop-overlay-icon">↓</span>
-              <span>Drop .md or .txt files</span>
+              <span>Drop .md · .txt · .json</span>
             </div>
           </div>
         )}
@@ -291,7 +344,7 @@ export default function App() {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".md,.txt"
+          accept=".md,.txt,.json"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileInput}
@@ -299,7 +352,32 @@ export default function App() {
         <div className="bottom-chrome">
           <button className="chrome-btn" onClick={() => setShowShortcuts(true)} title="Shortcuts (⌘/)">⌘/</button>
           <button className="chrome-btn" onClick={openFilePicker} title="Open file (⌘O)">open</button>
-          <button className="chrome-btn" onClick={exportActive} title="Export (⌘E)" disabled={!activeFile}>export</button>
+          <div className="export-wrap" ref={exportMenuRef}>
+            <button
+              className={`chrome-btn ${exportMenuOpen ? 'on' : ''}`}
+              onClick={() => setExportMenuOpen((o) => !o)}
+              title="Export (⌘E)"
+            >
+              export
+            </button>
+            {exportMenuOpen && (
+              <div className="export-menu">
+                <button
+                  className="export-menu-item"
+                  onClick={() => { exportActive(); setExportMenuOpen(false); }}
+                  disabled={!activeFile}
+                >
+                  current file
+                </button>
+                <button
+                  className="export-menu-item"
+                  onClick={() => { exportWorkspace(); setExportMenuOpen(false); }}
+                >
+                  workspace
+                </button>
+              </div>
+            )}
+          </div>
           <button
             className="chrome-btn"
             onClick={() => setSettings((s) => ({ ...s, theme: s.theme === 'dark' ? 'light' : 'dark' }))}
@@ -318,7 +396,7 @@ export default function App() {
         </div>
       </main>
 
-      <ShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} />
+      <ShortcutsPanel open={showShortcuts} onClose={() => setShowShortcuts(false)} onDeleteWorkspace={deleteWorkspace} />
       <TweaksPanel open={tweaksOpen} settings={settings} setSettings={setSettings} onClose={() => setTweaksOpen(false)} />
     </div>
   );

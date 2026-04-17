@@ -1,5 +1,25 @@
-export function ShortcutsPanel({ open, onClose }) {
+import { useState, useRef, useEffect } from 'react';
+
+export function ShortcutsPanel({ open, onClose, onDeleteWorkspace }) {
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [deleteInput, setDeleteInput] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (deleteMode) inputRef.current?.focus();
+  }, [deleteMode]);
+
+  useEffect(() => {
+    if (!open) { setDeleteMode(false); setDeleteInput(''); }
+  }, [open]);
+
   if (!open) return null;
+
+  const handleDelete = () => {
+    onDeleteWorkspace();
+    onClose();
+  };
+
   const rows = [
     ['⌘ N', 'new file'],
     ['⌘ O', 'open file'],
@@ -8,7 +28,7 @@ export function ShortcutsPanel({ open, onClose }) {
     ['⌘ K', 'focus search'],
     ['⌘ P', 'toggle markdown preview'],
     ['⌘ /', 'toggle shortcuts'],
-    ['⌘ E', 'export current file'],
+    ['⌘ E', 'export menu'],
     ['⌘ D', 'toggle dark mode'],
     ['Esc', 'close overlay'],
   ];
@@ -26,6 +46,38 @@ export function ShortcutsPanel({ open, onClose }) {
               <span>{label}</span>
             </div>
           ))}
+        </div>
+
+        <div className="delete-zone">
+          {!deleteMode ? (
+            <button className="delete-workspace-btn" onClick={() => setDeleteMode(true)}>
+              delete workspace
+            </button>
+          ) : (
+            <div className="delete-confirm">
+              <span className="delete-confirm-label">type DELETE to confirm</span>
+              <div className="delete-confirm-row">
+                <input
+                  ref={inputRef}
+                  className="delete-confirm-input"
+                  value={deleteInput}
+                  placeholder="DELETE"
+                  onChange={(e) => setDeleteInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && deleteInput === 'DELETE') handleDelete();
+                    if (e.key === 'Escape') { setDeleteMode(false); setDeleteInput(''); }
+                  }}
+                />
+                <button
+                  className="delete-confirm-btn"
+                  onClick={handleDelete}
+                  disabled={deleteInput !== 'DELETE'}
+                >
+                  confirm
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

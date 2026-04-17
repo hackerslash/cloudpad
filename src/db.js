@@ -69,6 +69,17 @@ const NotepadDB = {
       t.onerror = () => reject(t.error);
     });
   },
+  async replaceAll(files) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const t = db.transaction(STORE, 'readwrite');
+      const store = t.objectStore(STORE);
+      store.clear();
+      for (const f of files) store.put(f);
+      t.oncomplete = () => resolve(true);
+      t.onerror = () => reject(t.error);
+    });
+  },
 };
 
 export default NotepadDB;
