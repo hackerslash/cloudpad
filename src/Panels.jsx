@@ -48,23 +48,22 @@ export function ShortcutsPanel({ open, onClose, onDeleteWorkspace, onReplayTour 
           ))}
         </div>
 
-        <div className="shortcut-actions">
-          <button
-            className="shortcut-action-btn"
-            onClick={() => {
-              onReplayTour();
-              onClose();
-            }}
-          >
-            replay tour
-          </button>
-        </div>
-
         <div className="delete-zone">
           {!deleteMode ? (
-            <button className="delete-workspace-btn" onClick={() => setDeleteMode(true)}>
-              delete workspace
-            </button>
+            <div className="delete-actions-row">
+              <button className="delete-workspace-btn" onClick={() => setDeleteMode(true)}>
+                delete workspace
+              </button>
+              <button
+                className="shortcut-action-link"
+                onClick={() => {
+                  onReplayTour();
+                  onClose();
+                }}
+              >
+                replay tour
+              </button>
+            </div>
           ) : (
             <div className="delete-confirm">
               <span className="delete-confirm-label">type DELETE to confirm</span>
