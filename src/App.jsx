@@ -24,6 +24,7 @@ export default function App() {
   const [showPreview, setShowPreview] = useState(false);
   const [tweaksOpen, setTweaksOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const dragCounter = useRef(0);
 
   const [settings, setSettings] = useState(() => {
@@ -79,6 +80,7 @@ export default function App() {
   const openFile = (id) => {
     setOpenIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
     setActiveId(id);
+    setMobileSidebarOpen(false);
   };
 
   const closeTab = (id) => {
@@ -233,6 +235,9 @@ export default function App() {
 
   return (
     <div className={`app side-${settings.side}`}>
+      {mobileSidebarOpen && (
+        <div className="sidebar-backdrop" onClick={() => setMobileSidebarOpen(false)} />
+      )}
       <Sidebar
         files={files}
         activeId={activeId}
@@ -243,6 +248,7 @@ export default function App() {
         onDelete={deleteFile}
         side={settings.side}
         density={settings.density}
+        mobileOpen={mobileSidebarOpen}
       />
 
       <main
@@ -267,6 +273,7 @@ export default function App() {
           onClose={closeTab}
           onNew={newFile}
           style={settings.tabStyle}
+          onMenuToggle={() => setMobileSidebarOpen((o) => !o)}
         />
 
         <div className="editor-wrap">

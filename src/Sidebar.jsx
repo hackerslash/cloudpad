@@ -26,6 +26,7 @@ export default function Sidebar({
   onDelete,
   side,
   density,
+  mobileOpen,
 }) {
   const [q, setQ] = useState('');
   const [renamingId, setRenamingId] = useState(null);
@@ -122,7 +123,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className={`sidebar side-${side} density-${density}`}>
+    <aside className={`sidebar side-${side} density-${density}${mobileOpen ? ' mobile-open' : ''}`}>
       <div className="sidebar-head">
         <div className="brand">
           <span className="brand-dot" />

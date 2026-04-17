@@ -1,6 +1,7 @@
-export default function TabBar({ tabs, activeId, onSelect, onClose, onNew, style }) {
+export default function TabBar({ tabs, activeId, onSelect, onClose, onNew, style, onMenuToggle }) {
   return (
     <div className={`tabbar tabstyle-${style}`}>
+      <button className="menu-toggle" onClick={onMenuToggle} title="Files" aria-label="Toggle file list">≡</button>
       <div className="tabs">
         {tabs.map((t) => {
           const isActive = t.id === activeId;
