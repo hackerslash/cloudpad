@@ -130,6 +130,23 @@ export default function App() {
     setActiveId(f.id);
   };
 
+  // Heartbeat BPM tracking
+  const keystrokeTs = useRef([]);
+  const beatRecovery = useRef(null);
+  const updateBeat = useCallback(() => {
+    const now = Date.now();
+    keystrokeTs.current.push(now);
+    keystrokeTs.current = keystrokeTs.current.filter((t) => now - t < 3000);
+    const kps = keystrokeTs.current.length / 3;
+    const bpm = Math.min(160, 30 + kps * 11);
+    document.documentElement.style.setProperty('--beat-duration', `${(60 / bpm).toFixed(3)}s`);
+    clearTimeout(beatRecovery.current);
+    beatRecovery.current = setTimeout(() => {
+      document.documentElement.style.setProperty('--beat-duration', '2s');
+      keystrokeTs.current = [];
+    }, 2500);
+  }, []);
+
   // Debounced autosave
   const saveTimer = useRef(null);
   const pendingRef = useRef({});
@@ -150,6 +167,7 @@ export default function App() {
 
   const onBodyChange = (value) => {
     if (!activeFile) return;
+    updateBeat();
     setFiles((prev) =>
       prev.map((f) => (f.id === activeFile.id ? { ...f, body: value, updatedAt: Date.now() } : f))
     );

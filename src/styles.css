@@ -7,6 +7,8 @@
 -----------------------------------------------------------------*/
 
 :root {
+  --beat-duration: 2s; /* 30 BPM */
+
   /* themed */
   --bg: oklch(0.985 0.003 85);
   --fg: oklch(0.22 0.005 270);
@@ -144,13 +146,30 @@ button { cursor: pointer; }
   color: var(--muted);
 }
 .brand-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--accent);
   display: inline-block;
+  flex-shrink: 0;
 }
-.brand-name { color: var(--fg); letter-spacing: 0.12em; }
+.brand-name {
+  color: var(--fg);
+  letter-spacing: 0.12em;
+  display: inline-block;
+  animation: brand-beat var(--beat-duration) ease-in-out infinite;
+}
+@keyframes brand-beat {
+  /* lub */
+  0%   { transform: scale(1); }
+  8%   { transform: scale(1.07); }
+  16%  { transform: scale(1); }
+  /* dub */
+  24%  { transform: scale(1.04); }
+  36%  { transform: scale(1); }
+  /* rest */
+  100% { transform: scale(1); }
+}
 
 .new-btn {
   color: var(--muted);
