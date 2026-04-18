@@ -33,9 +33,9 @@ const NotepadDB = {
       req.onerror = () => reject(req.error);
     });
   },
-  async create({ name = 'untitled', body = '' } = {}) {
+  async create({ name = 'untitled', title = name, body = '' } = {}) {
     const now = Date.now();
-    const file = { id: uid(), name, body, pinned: 0, createdAt: now, updatedAt: now };
+    const file = { id: uid(), name, title, body, pinned: 0, createdAt: now, updatedAt: now };
     const db = await openDB();
     return new Promise((resolve, reject) => {
       const t = db.transaction(STORE, 'readwrite');

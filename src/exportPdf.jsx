@@ -135,10 +135,11 @@ function MarkdownPdfDocument({ note, exportedAt, font, accent }) {
   const fontFamily = FONT_FAMILIES[font] || FONT_FAMILIES.mono;
   const html = renderMarkdown(note.body || '');
   const stylesheet = buildStylesheet({ font, accent });
+  const displayTitle = note.title || note.name || 'untitled';
 
   return (
     <Document
-      title={note.name || 'untitled'}
+      title={displayTitle}
       author="Cloudpad"
       subject="Rendered Markdown export"
       creator="Cloudpad"
@@ -167,7 +168,7 @@ function MarkdownPdfDocument({ note, exportedAt, font, accent }) {
               marginBottom: 4,
             }}
           >
-            {note.name || 'untitled'}
+            {displayTitle}
           </Text>
           <Text
             style={{
@@ -199,6 +200,7 @@ export function getPdfFileName(name) {
 export async function exportMarkdownPdf(note, options = {}) {
   const safeNote = {
     name: note?.name || 'untitled',
+    title: note?.title || note?.name || 'untitled',
     body: note?.body || '',
   };
   const exportedAt = new Date();

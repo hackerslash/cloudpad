@@ -171,7 +171,7 @@ export default function App() {
   }, []);
 
   const createFile = useCallback(async () => {
-    const file = await NotepadDB.create({ name: 'untitled', body: '' });
+    const file = await NotepadDB.create({ name: 'untitled', title: 'untitled', body: '' });
     await refresh();
     setOpenIds((prev) => (prev.includes(file.id) ? prev : [...prev, file.id]));
     setActiveId(file.id);
@@ -310,10 +310,10 @@ export default function App() {
     scheduleSave(activeFile.id, { body: value });
   };
 
-  const onRenameActive = (name) => {
+  const onTitleChange = (title) => {
     if (!activeFile) return;
-    setFiles((prev) => prev.map((file) => (file.id === activeFile.id ? { ...file, name } : file)));
-    scheduleSave(activeFile.id, { name });
+    setFiles((prev) => prev.map((file) => (file.id === activeFile.id ? { ...file, title } : file)));
+    scheduleSave(activeFile.id, { title });
   };
 
   const renameFile = (id, name) => {
@@ -471,7 +471,7 @@ export default function App() {
     for (const file of valid) {
       const body = await file.text();
       const name = file.name.replace(/\.(md|txt)$/i, '');
-      const created = await NotepadDB.create({ name, body });
+      const created = await NotepadDB.create({ name, title: name, body });
       lastId = created.id;
       setOpenIds((prev) => (prev.includes(created.id) ? prev : [...prev, created.id]));
     }
@@ -544,7 +544,7 @@ export default function App() {
           <Editor
             file={activeFile}
             onChange={onBodyChange}
-            onRename={onRenameActive}
+            onTitleChange={onTitleChange}
             saveStatus={saveStatus}
             showPreview={showPreview}
             onTogglePreview={() => setShowPreview((current) => !current)}

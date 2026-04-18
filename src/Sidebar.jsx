@@ -48,6 +48,7 @@ export default function Sidebar({
       arr = files.filter(
         (f) =>
           f.name.toLowerCase().includes(needle) ||
+          (f.title || '').toLowerCase().includes(needle) ||
           (f.body || '').toLowerCase().includes(needle)
       );
     }

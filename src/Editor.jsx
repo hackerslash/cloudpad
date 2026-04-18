@@ -5,18 +5,18 @@ import { timeAgo } from './Sidebar.jsx';
 export default function Editor({
   file,
   onChange,
-  onRename,
+  onTitleChange,
   saveStatus,
   showPreview,
   onTogglePreview,
   width,
 }) {
-  const [titleVal, setTitleVal] = useState(file?.name || '');
+  const [titleVal, setTitleVal] = useState(file?.title || file?.name || '');
   const taRef = useRef(null);
 
   useEffect(() => {
-    setTitleVal(file?.name || '');
-  }, [file?.id]);
+    setTitleVal(file?.title || file?.name || '');
+  }, [file?.id, file?.title, file?.name]);
 
   const counts = useMemo(() => {
     const body = file?.body || '';
@@ -46,7 +46,8 @@ export default function Editor({
           onChange={(e) => setTitleVal(e.target.value)}
           onBlur={() => {
             const v = titleVal.trim() || 'untitled';
-            if (v !== file.name) onRename(v);
+            const currentTitle = file.title || file.name || 'untitled';
+            if (v !== currentTitle) onTitleChange(v);
           }}
           onKeyDown={(e) => { if (e.key === 'Enter') e.target.blur(); }}
         />
