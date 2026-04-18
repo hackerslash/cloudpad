@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 
 const MOBILE_BREAKPOINT = 640;
 const SPOTLIGHT_PADDING = 12;
+const SPOTLIGHT_VIEWPORT_PADDING = {
+  top: 0,
+  right: 16,
+  bottom: 0,
+  left: 16,
+};
 const VIEWPORT_PADDING = 16;
 const CARD_WIDTH = 320;
 
@@ -14,10 +20,26 @@ function getSpotlightRect(target) {
   const rect = target.getBoundingClientRect();
   if (!rect.width && !rect.height) return null;
 
-  const top = clamp(rect.top - SPOTLIGHT_PADDING, VIEWPORT_PADDING, window.innerHeight - VIEWPORT_PADDING);
-  const left = clamp(rect.left - SPOTLIGHT_PADDING, VIEWPORT_PADDING, window.innerWidth - VIEWPORT_PADDING);
-  const right = clamp(rect.right + SPOTLIGHT_PADDING, VIEWPORT_PADDING, window.innerWidth - VIEWPORT_PADDING);
-  const bottom = clamp(rect.bottom + SPOTLIGHT_PADDING, VIEWPORT_PADDING, window.innerHeight - VIEWPORT_PADDING);
+  const top = clamp(
+    rect.top - SPOTLIGHT_PADDING,
+    SPOTLIGHT_VIEWPORT_PADDING.top,
+    window.innerHeight - SPOTLIGHT_VIEWPORT_PADDING.bottom,
+  );
+  const left = clamp(
+    rect.left - SPOTLIGHT_PADDING,
+    SPOTLIGHT_VIEWPORT_PADDING.left,
+    window.innerWidth - SPOTLIGHT_VIEWPORT_PADDING.right,
+  );
+  const right = clamp(
+    rect.right + SPOTLIGHT_PADDING,
+    SPOTLIGHT_VIEWPORT_PADDING.left,
+    window.innerWidth - SPOTLIGHT_VIEWPORT_PADDING.right,
+  );
+  const bottom = clamp(
+    rect.bottom + SPOTLIGHT_PADDING,
+    SPOTLIGHT_VIEWPORT_PADDING.top,
+    window.innerHeight - SPOTLIGHT_VIEWPORT_PADDING.bottom,
+  );
 
   return {
     top,
