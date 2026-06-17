@@ -1,8 +1,22 @@
 // Tiny, safe-ish markdown renderer. Not full CommonMark — just the basics.
+
+// Only allow links with a safe scheme (or no scheme at all, i.e. relative/anchor).
+// Blocks javascript:, data:, vbscript:, etc. so rendered output can't run code.
+function sanitizeUrl(raw) {
+  const url = raw.trim();
+  const scheme = url.match(/^([a-z][a-z0-9+.-]*):/i);
+  if (scheme && !/^(https?|mailto)$/i.test(scheme[1])) return '#';
+  return url;
+}
+
 export function renderMarkdown(src) {
   if (!src) return '';
   const esc = (s) =>
-    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
 
   // Pull out fenced code blocks first
   const codeBlocks = [];
@@ -57,7 +71,8 @@ export function renderMarkdown(src) {
   // Links
   src = src.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener">$1</a>'
+    (_, text, url) =>
+      `<a href="${sanitizeUrl(url)}" target="_blank" rel="noopener">${text}</a>`
   );
 
   // Paragraphs (split on double newline)

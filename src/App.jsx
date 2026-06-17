@@ -256,14 +256,12 @@ export default function App() {
   }, [activeId, createFile, files, isDesktop, isLoaded, openFile, startTour]);
 
   const closeTab = (id) => {
-    setOpenIds((prev) => {
-      const index = prev.indexOf(id);
-      const next = prev.filter((value) => value !== id);
-      if (activeId === id) {
-        setActiveId(next[index] || next[index - 1] || next[0] || null);
-      }
-      return next;
-    });
+    const index = openIds.indexOf(id);
+    const next = openIds.filter((value) => value !== id);
+    setOpenIds(next);
+    if (activeId === id) {
+      setActiveId(next[index] || next[index - 1] || next[0] || null);
+    }
   };
 
   // Heartbeat BPM tracking
@@ -431,7 +429,7 @@ export default function App() {
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [activeId, createFile, openFilePicker]);
+  }, [activeId, openIds, createFile, openFilePicker]);
 
   const handleDragEnter = (event) => {
     event.preventDefault();
