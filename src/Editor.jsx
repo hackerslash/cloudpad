@@ -10,13 +10,46 @@ export default function Editor({
   showPreview,
   onTogglePreview,
   width,
+  autoCopyEnabled,
 }) {
   const [titleVal, setTitleVal] = useState(file?.title || file?.name || '');
+  const [copied, setCopied] = useState(false);
   const taRef = useRef(null);
+  const lastCopiedRef = useRef('');
+  const copyTimerRef = useRef(null);
 
   useEffect(() => {
     setTitleVal(file?.title || file?.name || '');
   }, [file?.id, file?.title, file?.name]);
+
+  useEffect(() => {
+    const el = taRef.current;
+    if (!el || !autoCopyEnabled) return;
+    lastCopiedRef.current = '';
+
+    const copySelection = () => {
+      const { selectionStart, selectionEnd, value } = el;
+      if (selectionStart === selectionEnd) {
+        lastCopiedRef.current = '';
+        return;
+      }
+      const text = value.slice(selectionStart, selectionEnd);
+      if (text === lastCopiedRef.current) return;
+      lastCopiedRef.current = text;
+      navigator.clipboard?.writeText(text).then(() => {
+        setCopied(true);
+        clearTimeout(copyTimerRef.current);
+        copyTimerRef.current = setTimeout(() => setCopied(false), 1400);
+      }).catch(() => {});
+    };
+
+    const events = ['mouseup', 'keyup', 'touchend'];
+    events.forEach((event) => el.addEventListener(event, copySelection));
+    return () => {
+      events.forEach((event) => el.removeEventListener(event, copySelection));
+      clearTimeout(copyTimerRef.current);
+    };
+  }, [autoCopyEnabled, file?.id, showPreview]);
 
   const counts = useMemo(() => {
     const body = file?.body || '';
@@ -57,6 +90,10 @@ export default function Editor({
             <span className="save-text">
               {saveStatus === 'saving' ? 'saving' : 'saved'}
             </span>
+          </span>
+          <span className={`copy-status ${copied ? 'visible' : ''}`}>
+            <span className="copy-dot" />
+            <span>copied</span>
           </span>
           <button
             className={`tool-btn ${showPreview ? 'on' : ''}`}

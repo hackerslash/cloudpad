@@ -166,6 +166,12 @@ export function TweaksPanel({ open, settings, setSettings, onClose }) {
           <Pill key={k} active={settings.accent === k} onClick={() => set('accent', k)} swatch={c}>{k}</Pill>
         ))}
       </Section>
+
+      <Section label="auto-copy selection">
+        {[[true, 'on'], [false, 'off']].map(([v, l]) => (
+          <Pill key={l} active={settings.autoCopySelection === v} onClick={() => set('autoCopySelection', v)}>{l}</Pill>
+        ))}
+      </Section>
     </div>
   );
 }

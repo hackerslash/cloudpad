@@ -21,6 +21,10 @@
   --accent: oklch(0.55 0.06 250);
   --accent-soft: oklch(0.55 0.06 250 / 0.08);
   --selection: oklch(0.55 0.06 250 / 0.18);
+  --danger: oklch(0.55 0.1 25);
+  --danger-line: oklch(0.55 0.1 25 / 0.4);
+  --danger-soft: oklch(0.55 0.1 25 / 0.08);
+  --ok: oklch(0.65 0.05 145);
 
   /* fonts */
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -95,6 +99,20 @@ button, input, textarea {
   padding: 0;
 }
 button { cursor: pointer; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.textarea:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-name { animation: none; }
+  .blinking-cursor { animation: none; opacity: 1; }
+  .save-status.saving .save-dot { animation: none; }
+}
 
 /* ---------------- LAYOUT ---------------- */
 .app {
@@ -375,12 +393,12 @@ button { cursor: pointer; }
   color: var(--faint);
   font-size: 14px;
   line-height: 1;
-  opacity: 0;
+  opacity: 0.4;
   transition: opacity 120ms ease, color 120ms ease;
   padding: 2px 4px;
   margin-right: -6px;
 }
-.tab:hover .tab-close, .tab.active .tab-close { opacity: 1; }
+.tab:hover .tab-close, .tab.active .tab-close, .tab-close:focus-visible { opacity: 1; }
 .tab-close:hover { color: var(--fg); }
 
 .tab-new {
@@ -528,10 +546,31 @@ button { cursor: pointer; }
   background: var(--accent);
   animation: pulse 900ms ease-in-out infinite;
 }
-.save-status.saved .save-dot { background: oklch(0.65 0.05 145); }
+.save-status.saved .save-dot { background: var(--ok); }
 @keyframes pulse {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
+}
+
+.copy-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--ok);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+.copy-status.visible { opacity: 1; }
+.copy-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+@media (prefers-reduced-motion: reduce) {
+  .copy-status { transition: none; }
 }
 
 .tool-btn {
@@ -732,11 +771,11 @@ button { cursor: pointer; }
 }
 .dialog-btn-ok:hover { background: var(--accent-soft); border-color: var(--accent); }
 .dialog-btn-ok.danger {
-  color: oklch(0.52 0.12 25);
-  border-color: oklch(0.52 0.12 25 / 0.45);
-  background: oklch(0.52 0.12 25 / 0.07);
+  color: var(--danger);
+  border-color: var(--danger-line);
+  background: var(--danger-soft);
 }
-.dialog-btn-ok.danger:hover { border-color: oklch(0.52 0.12 25); }
+.dialog-btn-ok.danger:hover { border-color: var(--danger); }
 .overlay-head {
   display: flex;
   justify-content: space-between;
@@ -777,7 +816,7 @@ button { cursor: pointer; }
 .shortcut-action-link {
   font-size: 11px;
   letter-spacing: 0.06em;
-  color: #000;
+  color: var(--fg);
   padding: 0;
   transition: opacity 120ms ease;
 }
@@ -799,7 +838,7 @@ button { cursor: pointer; }
 .delete-workspace-btn {
   font-size: 11px;
   letter-spacing: 0.06em;
-  color: oklch(0.55 0.1 25);
+  color: var(--danger);
   padding: 0;
   opacity: 0.7;
   transition: opacity 120ms ease;
@@ -814,7 +853,7 @@ button { cursor: pointer; }
 .delete-confirm-label {
   font-size: 11px;
   letter-spacing: 0.08em;
-  color: oklch(0.55 0.1 25);
+  color: var(--danger);
 }
 .delete-confirm-row {
   display: flex;
@@ -825,24 +864,24 @@ button { cursor: pointer; }
   flex: 1;
   font-size: 12px;
   font-family: var(--font-mono);
-  border-bottom: 1px solid oklch(0.55 0.1 25 / 0.4);
+  border-bottom: 1px solid var(--danger-line);
   padding-bottom: 3px;
   color: var(--fg);
   letter-spacing: 0.08em;
 }
 .delete-confirm-input::placeholder { color: var(--faint); }
-.delete-confirm-input:focus { border-bottom-color: oklch(0.55 0.1 25); outline: none; }
+.delete-confirm-input:focus { border-bottom-color: var(--danger); outline: none; }
 .delete-confirm-btn {
   font-size: 11px;
   letter-spacing: 0.06em;
   padding: 4px 12px;
-  border: 1px solid oklch(0.55 0.1 25 / 0.4);
-  color: oklch(0.55 0.1 25);
+  border: 1px solid var(--danger-line);
+  color: var(--danger);
   transition: all 120ms ease;
 }
 .delete-confirm-btn:not(:disabled):hover {
-  background: oklch(0.55 0.1 25 / 0.08);
-  border-color: oklch(0.55 0.1 25);
+  background: var(--danger-soft);
+  border-color: var(--danger);
 }
 .delete-confirm-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 kbd {

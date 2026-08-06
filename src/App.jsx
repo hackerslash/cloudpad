@@ -17,6 +17,7 @@ const TWEAK_DEFAULTS = {
   tabStyle: 'classic',
   width: 'medium',
   accent: 'slate',
+  autoCopySelection: true,
 };
 
 const TOUR_STEPS = [
@@ -547,6 +548,7 @@ export default function App() {
             showPreview={showPreview}
             onTogglePreview={() => setShowPreview((current) => !current)}
             width={settings.width}
+            autoCopyEnabled={settings.autoCopySelection}
           />
         </div>
 
